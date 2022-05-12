@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Component
-class JWTFilter : OncePerRequestFilter() {
+class JWTFilter() : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val access: String = request.getHeader("access")
         val refresh: String = request.getHeader("refresh")
