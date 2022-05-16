@@ -21,7 +21,6 @@ data class User(
 
   @Enumerated(EnumType.STRING)
   @ElementCollection
-
   private val authorities: Set<UserRole>,
 
   @CreationTimestamp

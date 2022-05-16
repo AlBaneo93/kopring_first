@@ -29,6 +29,7 @@ class UserController(private val userService: UserService, private val jwtUtil: 
 
   @PostMapping("/login")
   fun userLogin(@RequestBody loginDto: LoginDto, response: HttpServletResponse): Boolean {
+    println("로그인 컨트롤러 메서드 접근")
     return try {
       // authentication Manager를 통해 인증 로직 호출
       val authentication: Authentication = authenticationManager.authenticate(JwtAuthenticationToken(principal = loginDto.principal, credentials = loginDto.credentials, authorities = null))
@@ -53,6 +54,7 @@ class UserController(private val userService: UserService, private val jwtUtil: 
 
   @GetMapping("/users")
   fun getAllUsers(): MutableList<User> {
+    println("사용자 목록 조회 접근")
     return userService.getAllUsers()
   }
 

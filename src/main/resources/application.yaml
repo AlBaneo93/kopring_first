@@ -8,17 +8,22 @@ spring :
     url :               jdbc:mysql://localhost:33306/kopringdb
     username :          root
     password :          root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name : com.mysql.cj.jdbc.Driver
 
   redis :
     host : localhost
     port : 36379
 
-  jpa:
-#    generate-ddl: true
-    show-sql: true
-#    hibernate:
-#      ddl-auto: 'create-drop'
+  jpa :
+    generate-ddl :                    true
+    show-sql :                        true
+    hibernate :
+      ddl-auto : create-drop
+    defer-datasource-initialization : true
+
+  sql:
+    init :
+      mode : always
 
 jwt :
   header :
