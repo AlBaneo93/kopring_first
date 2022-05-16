@@ -2,14 +2,18 @@ package edu.kotlin.basic_crud.User
 
 import edu.kotlin.basic_crud.Group.Group
 import edu.kotlin.basic_crud.Group.GroupUser
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
+@Table(name = "job_user")
 data class User(
-  @Id @GeneratedValue private val seq: Long,
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private val seq: Long,
   private val id: String,
   private val password: String,
   private val name: String,
@@ -17,9 +21,16 @@ data class User(
 
   @Enumerated(EnumType.STRING)
   @ElementCollection
+
   private val authorities: Set<UserRole>,
 
-  @OneToMany(mappedBy = "user") private val groups: MutableSet<GroupUser>
+  @CreationTimestamp
+  private val createdAt: LocalDateTime,
+
+  @UpdateTimestamp
+  private val updatedAt: LocalDateTime,
+
+  @OneToMany(mappedBy = "user") private val joinGroups: MutableSet<GroupUser>
 ) : UserDetails {
 
   override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities.map {
@@ -46,6 +57,4 @@ enum class UserRole(val code: Int, val type: String) {
   DEVELOPER(1, "developer"),
   STAFF(2, "staff"),
   ADMIN(3, "admin");
-
-
 }

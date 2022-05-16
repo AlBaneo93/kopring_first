@@ -5,15 +5,20 @@ server :
 
 spring :
   datasource :
-    url :               jdbc:h2:mem:test
+    url :               jdbc:mysql://localhost:33306/kopringdb
     username :          root
     password :          root
-    driver-class-name : org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   redis :
     host : localhost
-    port : 6369
+    port : 36379
 
+  jpa:
+#    generate-ddl: true
+    show-sql: true
+#    hibernate:
+#      ddl-auto: 'create-drop'
 
 jwt :
   header :
