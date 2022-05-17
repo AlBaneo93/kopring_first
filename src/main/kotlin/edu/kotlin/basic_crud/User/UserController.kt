@@ -3,6 +3,9 @@ package edu.kotlin.basic_crud.User
 import edu.kotlin.basic_crud.Config.Security.JwtAuthenticationToken
 import edu.kotlin.basic_crud.Config.Security.JwtUtil
 import edu.kotlin.basic_crud.exceptions.UserNotFoundException
+import edu.kotlin.basic_crud.utils.ApiResponse
+import edu.kotlin.basic_crud.utils.ApiResponse.Companion.error
+import edu.kotlin.basic_crud.utils.ApiResponse.Companion.success
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
@@ -28,51 +31,52 @@ class UserController(private val userService: UserService, private val jwtUtil: 
   lateinit var refreshHeader: String
 
   @PostMapping("/login")
-  fun userLogin(@RequestBody loginDto: LoginDto, response: HttpServletResponse): Boolean {
-    println("로그인 컨트롤러 메서드 접근")
-    return try {
-      // authentication Manager를 통해 인증 로직 호출
-      val authentication: Authentication = authenticationManager.authenticate(JwtAuthenticationToken(principal = loginDto.principal, credentials = loginDto.credentials, authorities = null))
-      val signinUser: User = authentication.details as User
+  fun userLogin(@RequestBody loginDto: LoginDto, response: HttpServletResponse): ApiResponse.ApiResults<Boolean> = try {
+    // authentication Manager를 통해 인증 로직 호출
+    val authentication: Authentication = authenticationManager.authenticate(JwtAuthenticationToken(principal = loginDto.principal, credentials = loginDto.credentials, authorities = null))
+    val signinUser: User = authentication.details as User
 
-      val accessToken = jwtUtil.generateAccess(signinUser)
-      val refreshToken = jwtUtil.generateRefresh(signinUser)
+    val accessToken = jwtUtil.generateAccess(signinUser)
+    val refreshToken = jwtUtil.generateRefresh(signinUser)
 
-      response.setHeader(accessHeader, accessToken)
-      response.setHeader(refreshHeader, refreshToken)
+    response.setHeader(accessHeader, accessToken)
+    response.setHeader(refreshHeader, refreshToken)
 
-      true
-    } catch (e: Exception) {
-      return false
-    }
+    success(true)
+  } catch (e: Exception) {
+    throw Exception(e.message)
   }
 
+
   @PostMapping("/signup")
-  fun userSignUp(@RequestBody user: User): User {
-    return userService.signUp(user)
+  fun userSignUp(@RequestBody user: User): ApiResponse.ApiResults<User> = try {
+    success(userService.signUp(user))
+  } catch (e: Exception) {
+    throw Exception(e.message)
   }
 
   @GetMapping("/users")
-  fun getAllUsers(): MutableList<User> {
-    println("사용자 목록 조회 접근")
-    return userService.getAllUsers()
+  fun getAllUsers(): ApiResponse.ApiResults<MutableList<User>> = try {
+    success(userService.getAllUsers())
+  } catch (e: Exception) {
+    throw Exception(e.message)
   }
 
+
   @GetMapping("/user/{seq}")
-  fun getUserById(@PathVariable("seq") seq: Long): User? {
+  fun getUserById(@PathVariable("seq") seq: Long): ApiResponse.ApiResults<User> {
     return try {
-      userService.getUserBySeq(seq).get()
+      success(userService.getUserBySeq(seq).get())
     } catch (e: Exception) {
-      null
+      throw Exception(e.message)
     }
   }
 
   @GetMapping("/user")
-  fun getMyProfile(@AuthenticationPrincipal author: User?): User? {
-    return try {
-      author!!
-    } catch (e: Exception) {
-      null
-    }
+  fun getMyProfile(@AuthenticationPrincipal author: User?): ApiResponse.ApiResults<User> = try {
+    success(author)
+  } catch (e: Exception) {
+    throw Exception(e.message)
   }
+
 }
