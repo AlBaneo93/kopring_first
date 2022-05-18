@@ -2,23 +2,77 @@ apiVersion : v1
 kind :       Namespace
 metadata :
   name : kopring-ns
-#---
-#apiVersion : v1
-#kind :       Service
-#metadata :
-#  name :      nginx-service
-#  labels :
-#    app : kopring
-#  namespace : kopring-ns
-#spec :
-#  ports :
-#    - port :       80
-#      targetPort : 80
-#      protocol :   TCP
-#      name :       nginx-port
-#  selector :
-#    app : kopring-back
-#  type : NodePort
+---
+# nginx configuration
+apiVersion : v1
+kind :       ConfigMap
+metadata :
+  name :      nginx-conf
+  namespace : kopring-ns
+data :
+  nginx.conf : |
+               user nginx;
+               worker_processes auto;
+               
+               error_log /var/log/nginx/error.log warn;
+               pid /var/run/nginx.pid;
+               
+               events {
+               worker_connections 1024;
+               }
+               
+               http {
+                   include /etc/nginx/mime.types;
+                   default_type application/json;
+               
+                   log_format main '$remote_addr - $remote_user [$time_local] "$request"'
+                   '$status $body_bytes_sent "$http_referer" '
+                   '"$http_user_agent" "$http_x_forwarded_for"';
+               
+                   access_log /var/log/nginx/access.log main;
+               
+                   sendfile on;
+               
+                   keepalive_timeout 65;
+               
+                   upstream backend {
+                       server back-service:8080;
+                   }
+               
+                   server {
+                       listen 80;
+                       listen [::]:80;
+               
+                       location / {
+                           proxy_pass http://backend;
+                           proxy_set_header Host $http_host;
+                           proxy_set_header X-Real-IP $remote_addr;
+                           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                           # return https://$host$request_uri;
+                       }
+               
+                       location /robots.txt {
+                           return 200 "User-agent: *\nDisallow: /";
+                       }
+                   }
+               }
+---
+apiVersion : v1
+kind :       Service
+metadata :
+  name :      nginx-service
+  labels :
+    app : kopring
+  namespace : kopring-ns
+spec :
+  ports :
+    - port :       80
+      targetPort : 80
+      protocol :   TCP
+      name :       nginx-port
+  selector :
+    app : kopring-nginx
+  type : NodePort
 ---
 apiVersion : v1
 kind :       Service
@@ -70,7 +124,38 @@ spec :
   selector :
     app : mysql
   type : NodePort
-
+---
+# nginx
+apiVersion : apps/v1
+kind :       Deployment
+metadata :
+  name :      kopring-nginx
+  labels :
+    app : kopring-nginx
+  namespace : kopring-ns
+spec :
+  selector :
+    matchLabels :
+      app : kopring-nginx
+  template :
+    metadata :
+      labels :
+        app : kopring-nginx
+    spec :
+      containers :
+        - name :            nginx
+          imagePullPolicy : IfNotPresent
+          image :           nginx
+          ports :
+            - containerPort : 80
+          volumeMounts :
+            - mountPath : /etc/nginx/nginx.conf
+              name :      nginx-config-cm
+              subPath :   nginx.conf
+      volumes :
+        - configMap :
+            name : nginx-conf # configmap의 이름
+          name : nginx-config-cm # volume Mounts에서 참조할 이름 (e.g. alias)
 ---
 # spring
 apiVersion : apps/v1
@@ -96,9 +181,9 @@ spec :
           ports :
             - containerPort : 8080
           imagePullPolicy : Always
-          env:
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://mysql-service:3306/kopringdb"
+          env :
+            - name :  SPRING_DATASOURCE_URL
+              value : "jdbc:mysql://mysql-service:3306/kopringdb"
 ---
 # mysql
 apiVersion : apps/v1
@@ -154,3 +239,27 @@ spec :
           image : redis
           ports :
             - containerPort : 6379
+
+---
+# ingress controller
+# 모든 서비스를 묶기위한 방법
+apiVersion : networking.k8s.io/v1
+kind :       Ingress
+metadata :
+  namespace: kopring-ns
+  name : kopring-ingress
+  annotations :
+#    kubernetes.io/ingress.class :                'nginx'
+    nginx.ingress.kubernetes.io/rewrite-target : /
+spec :
+  ingressClassName : nginx-ingress
+  rules :
+    - http :
+        paths :
+          - path :     /
+            backend :
+              service :
+                name : nginx-service
+                port :
+                  number : 80
+            pathType : Prefix
