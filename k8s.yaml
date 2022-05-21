@@ -243,23 +243,46 @@ spec :
 ---
 # ingress controller
 # 모든 서비스를 묶기위한 방법
+# Ingress를 정의하는 것은 선언적인 것일뿐 실제로는 아무런 일도 일어나지 않는다.
 apiVersion : networking.k8s.io/v1
 kind :       Ingress
 metadata :
   namespace: kopring-ns
   name : kopring-ingress
   annotations :
-#    kubernetes.io/ingress.class :                'nginx'
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target : /
 spec :
   ingressClassName : nginx-ingress
   rules :
+    - host: albaneo.iptime.org
     - http :
         paths :
           - path :     /
             backend :
               service :
-                name : nginx-service
+                name : kopring-service
                 port :
                   number : 80
             pathType : Prefix
+
+---
+# ingress controller's service
+# ingress를 endpoint로 사용하기 위한 서비스
+apiVersion : v1
+kind :       Service
+metadata :
+  name :      ingress-service
+  labels :
+    app.kubernetes.io/name : kopring-ingress
+    app.kubernetes.io/part-of : kopring-ingress
+  namespace : kopring-ns
+spec :
+  type: LoadBalancer
+  ports :
+    - port :       80
+      targetPort : 80
+      protocol :   TCP
+  selector :
+    app.kubernetes.io/name: kopring-ingress
+    app.kubernetes.io/part-of: kopring-ingress

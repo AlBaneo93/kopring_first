@@ -34,8 +34,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
-    implementation("mysql:mysql-connector-java")
-//    implementation("org.mariadb.jdbc:mariadb-java-client")
+//    implementation("mysql:mysql-connector-java")
+    implementation("org.mariadb.jdbc:mariadb-java-client")
 
     // jwt
     implementation("io.jsonwebtoken:jjwt:0.9.1")

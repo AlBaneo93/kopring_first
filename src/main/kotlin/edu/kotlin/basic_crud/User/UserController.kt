@@ -22,7 +22,11 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api")
-class UserController(private val userService: UserService, private val jwtUtil: JwtUtil, private val authenticationManager: AuthenticationManager) {
+class UserController(
+  private val userService: UserService,
+  private val jwtUtil: JwtUtil,
+  private val authenticationManager: AuthenticationManager
+) {
 
   @Value("\${jwt.header.access}")
   lateinit var accessHeader: String

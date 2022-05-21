@@ -18,7 +18,7 @@ interface UserService : UserDetailsService {
 }
 
 @Service
-class UserServiceImpl(val repository: UserRepository) : UserService {
+class UserServiceImpl(private val repository: UserRepository) : UserService {
 
   override fun login(): User {
     TODO("Not yet implemented")
