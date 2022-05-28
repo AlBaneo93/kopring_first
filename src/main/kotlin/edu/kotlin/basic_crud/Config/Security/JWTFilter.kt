@@ -20,13 +20,9 @@ import javax.servlet.http.HttpServletResponse
 
 @Slf4j
 @Component
-class JWTFilter(
-  private val jwtUtil: JwtUtil,
-  private val userService: UserService,
-  private val redisTemplate: RedisTemplate<Any, Any>,
-
-
-  ) : OncePerRequestFilter() {
+open class JWTFilter(
+  private val jwtUtil: JwtUtil, private val userService: UserService, private val redisTemplate: RedisTemplate<Any, Any>
+) : OncePerRequestFilter() {
 
   @Value("\${jwt.header.access}")
   lateinit var accessHeader: String
@@ -35,11 +31,10 @@ class JWTFilter(
   lateinit var refreshHeader: String
 
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-    logger.debug("user access to jwtfilter")
 
     try {
-      val access: String = request.getHeader("access")
-      val refresh: String = request.getHeader("refresh")
+      val access: String = request.getHeader("access") ?: ""
+      val refresh: String = request.getHeader("refresh") ?: ""
 
       if (refresh.isNotBlank()) {
         if (access.isEmpty()) {
@@ -58,10 +53,8 @@ class JWTFilter(
       }
 
     } catch (e: Exception) {
-      logger.debug("${e.message}")
-      throw JwtExtractException("${e.message}")
+      logger.debug("${e.cause} ::${e.message}")
     }
-
     filterChain.doFilter(request, response)
   }
 

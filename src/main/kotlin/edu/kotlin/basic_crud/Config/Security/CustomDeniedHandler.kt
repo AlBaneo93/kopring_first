@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletResponse
 class CustomDeniedHandler : AccessDeniedHandler {
 
   override fun handle(request: HttpServletRequest?, response: HttpServletResponse?, accessDeniedException: AccessDeniedException?) {
-println("액세스 거부 핸들러")
+    println("Custom Access Denied Handler")
+    println("액세스 거부 핸들러")
     response!!.sendError(HttpStatus.FORBIDDEN.value(), "Access Denied has no authorize info")
     response.writer.println("접근 거부합니다")
   }

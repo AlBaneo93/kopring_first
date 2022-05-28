@@ -11,13 +11,13 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "job_user")
+@Table(name = "member")
 data class User(
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private val seq: Long,
-  private val id: String,
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val seq: Long,
+  val id: String,
   private val password: String,
-  private val name: String,
-  private val isAdmin: Boolean,
+  val name: String,
+  val isAdmin: Boolean,
 
   @Enumerated(EnumType.STRING)
   @ElementCollection

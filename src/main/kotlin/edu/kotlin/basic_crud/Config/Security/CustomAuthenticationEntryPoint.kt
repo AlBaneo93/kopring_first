@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse
 class CustomAuthenticationEntryPoint : AuthenticationEntryPoint {
 
   override fun commence(request: HttpServletRequest?, response: HttpServletResponse?, authException: AuthenticationException?) {
-
+    println("Custom Authentication Entry Point")
     response!!.apply {
       // NOTE 2022-05-17 : Senderror를 먼저 쓰면 streamdl 끊겨 이후의 메시지는 보이지 않는다.
       // NOTE 2022-05-17 : 그러므로, 커스텀한 메시지를 보내려면 outputstream만 이용한다

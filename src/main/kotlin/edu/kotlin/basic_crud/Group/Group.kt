@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
-@Table(name = "job_group")
+@Table(name = "groups")
 data class Group(
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private val seq: Long,
   private val name: String,

@@ -13,21 +13,22 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
-class SecurityConfig(val jwtFilter: JWTFilter,
-                     val deniedHandler:CustomDeniedHandler,
-val authEntryPoint : CustomAuthenticationEntryPoint) : WebSecurityConfigurerAdapter() {
+class SecurityConfig(
+  val jwtFilter: JWTFilter,
+  val deniedHandler: CustomDeniedHandler,
+  val authEntryPoint: CustomAuthenticationEntryPoint
+) : WebSecurityConfigurerAdapter() {
 
   override fun configure(http: HttpSecurity) {
 //    super.configure(http)
     http.csrf().disable()
         .formLogin().disable()
+        .httpBasic().disable()
         .authorizeRequests()
-        .antMatchers("/api/login","/api/signup").permitAll()
+        .antMatchers("/api/login", "/api/signup", "/h2/**").permitAll()
         .anyRequest().authenticated()
-//        .anyRequest().permitAll()
         .and()
         .exceptionHandling()
-//        .accessDeniedHandler(deniedHandler)
         .authenticationEntryPoint(authEntryPoint)
         .and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

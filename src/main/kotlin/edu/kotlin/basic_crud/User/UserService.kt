@@ -8,7 +8,7 @@ import java.util.Optional
 
 interface UserService : UserDetailsService {
 
-  fun login(): User
+  fun login(user: User): User
 
   fun getAllUsers(): MutableList<User>
 
@@ -18,10 +18,10 @@ interface UserService : UserDetailsService {
 }
 
 @Service
-class UserServiceImpl(private val repository: UserRepository) : UserService {
+open class UserserviceImpl(private val repository: UserRepository) : UserService {
 
-  override fun login(): User {
-    TODO("Not yet implemented")
+  override fun login(user: User): User {
+    return repository.save(user)
   }
 
   override fun getAllUsers(): MutableList<User> {
@@ -34,7 +34,7 @@ class UserServiceImpl(private val repository: UserRepository) : UserService {
   }
 
   override fun signUp(user: User): User {
-    TODO("Not yet implemented")
+    return repository.save(user)
   }
 
   override fun loadUserByUsername(username: String?): UserDetails {

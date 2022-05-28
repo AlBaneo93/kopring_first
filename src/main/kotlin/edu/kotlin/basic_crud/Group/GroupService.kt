@@ -4,43 +4,45 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 interface GroupService {
-    fun getAllGroups(): MutableList<Group>
 
-    fun getGroupBySeq(seq: Long): Group?
+  fun getAllGroups(): MutableList<Group>
 
-    fun addGroup(group: Group): Group
+  fun getGroupBySeq(seq: Long): Group?
 
-    fun deleteGroup(group: Group)
+  fun addGroup(group: Group): Group
 
-    fun deleteGroup(seq: Long)
+  fun deleteGroup(group: Group)
 
-    fun updateGroup(group: Group): Group
+  fun deleteGroup(seq: Long)
+
+  fun updateGroup(group: Group): Group
 }
 
 @Service
-class GroupServiceImpl(private val groupRepository: GroupRepository) : GroupService {
-    override fun getAllGroups(): MutableList<Group> {
-        return groupRepository.findAll()
-    }
+open class GroupServiceImpl(private val groupRepository: GroupRepository) : GroupService {
 
-    override fun getGroupBySeq(seq: Long): Group? {
-        return groupRepository.findByIdOrNull(seq)
-    }
+  override fun getAllGroups(): MutableList<Group> {
+    return groupRepository.findAll()
+  }
 
-    override fun addGroup(group: Group): Group {
-        return groupRepository.save(group)
-    }
+  override fun getGroupBySeq(seq: Long): Group? {
+    return groupRepository.findByIdOrNull(seq)
+  }
 
-    override fun deleteGroup(group: Group) {
-        groupRepository.delete(group)
-    }
+  override fun addGroup(group: Group): Group {
+    return groupRepository.save(group)
+  }
 
-    override fun deleteGroup(seq: Long) {
-        groupRepository.deleteById(seq)
-    }
+  override fun deleteGroup(group: Group) {
+    groupRepository.delete(group)
+  }
 
-    override fun updateGroup(group: Group): Group {
-        return groupRepository.saveAndFlush(group)
-    }
+  override fun deleteGroup(seq: Long) {
+    groupRepository.deleteById(seq)
+  }
+
+  override fun updateGroup(group: Group): Group {
+    return groupRepository.saveAndFlush(group)
+  }
 
 }

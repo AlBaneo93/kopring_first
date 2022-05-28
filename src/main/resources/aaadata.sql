@@ -1,4 +1,4 @@
-INSERT INTO job_user ( seq, id, password, name, is_admin, created_at, updated_at )
+INSERT INTO `member` ( seq, id, password, name, is_admin, created_at, updated_at )
 VALUES
   ( 1, 'bmark0@cbsnews.com', '1234', 'Bamby', TRUE, '2022-04-24', '2022-05-05' ),
   ( 2, 'barndt1@com.com', '1234', 'Bernardina', TRUE, '2021-07-06', '2022-04-09' ),
@@ -31,7 +31,7 @@ VALUES
   ( 29, 'eclementss@webeden.co.uk', '1234', 'Ester', TRUE, '2021-07-06', '2021-06-04' ),
   ( 30, 'vdawkinst@bloglines.com', '1234', 'Vivyan', TRUE, '2021-06-10', '2021-08-25' );
 
-INSERT INTO job_group ( seq, name, created_at, last_update, ended_at )
+INSERT INTO `group` ( seq, name, created_at, last_update, ended_at )
 VALUES
   ( 1, 'Drive Shack Inc.', '2021-12-31', '2021-10-14', '2027-03-18' ),
   ( 2, 'Real Goods Solar, Inc.', '2021-10-21', '2021-07-10', '2026-04-09' ),
@@ -64,7 +64,7 @@ VALUES
   ( 29, 'New York Mortgage Trust, Inc.', '2022-01-19', '2021-09-14', '2024-11-07' ),
   ( 30, 'Social Reality, Inc.', '2021-12-10', '2022-03-26', '2024-09-05' );
 
-INSERT INTO group_user ( user_seq, group_seq )
+INSERT INTO `group_user` ( user_seq, group_seq )
 VALUES
   ( 6, 26 ),
   ( 7, 7 ),
@@ -107,7 +107,7 @@ VALUES
   ( 4, 15 ),
   ( 26, 4 );
 
-INSERT INTO user_authorities ( user_seq, authorities )
+INSERT INTO `user_authorities` ( user_seq, authorities )
 VALUES
   ( 24, 'USER' ),
   ( 19, 'STAFF' ),
