@@ -1,7 +1,7 @@
 package edu.kotlin.basic_crud.Doamin.Service
 
 import edu.kotlin.basic_crud.Doamin.models.User.User
-import edu.kotlin.basic_crud.Doamin.models.User.UserRepository
+import edu.kotlin.basic_crud.Adapter.Out.UserRepositoryAdaptor
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -20,7 +20,7 @@ interface UserService : UserDetailsService {
 }
 
 @Service
-open class UserserviceImpl(private val repository: UserRepository) : UserService {
+open class UserserviceImpl(private val repository: UserRepositoryAdaptor) : UserService {
 
   override fun login(user: User): User {
     return repository.save(user)

@@ -1,7 +1,6 @@
 package edu.kotlin.basic_crud.Adapter.Out
 
 import edu.kotlin.basic_crud.Doamin.models.Group.Group
-import edu.kotlin.basic_crud.Doamin.models.Group.GroupRepository
 import edu.kotlin.basic_crud.Port.Out.GroupRepositoryPort
 import lombok.extern.slf4j.Slf4j
 import org.springframework.stereotype.Component
@@ -10,19 +9,19 @@ import java.util.*
 @Slf4j
 @Component
 class GroupPersistAdapter(
-  private val groupRepository: GroupRepository
+  private val groupRepositoryAdapter: GroupRepositoryAdapter
 ) : GroupRepositoryPort {
 
-  override fun saveGroupInfo(group: Group): Group = groupRepository.save(group)
+  override fun saveGroupInfo(group: Group): Group = groupRepositoryAdapter.save(group)
 
-  override fun updateGroupInfo(group: Group): Group = groupRepository.saveAndFlush(group)
+  override fun updateGroupInfo(group: Group): Group = groupRepositoryAdapter.saveAndFlush(group)
 
-  override fun getAllGroups(): MutableList<Group> = groupRepository.findAll()
+  override fun getAllGroups(): MutableList<Group> = groupRepositoryAdapter.findAll()
 
-  override fun getGroupById(id: Long): Optional<Group> = groupRepository.findById(id)
+  override fun getGroupById(id: Long): Optional<Group> = groupRepositoryAdapter.findById(id)
 
   override fun deleteGroupById(group: Group): Boolean {
-    groupRepository.delete(group)
+    groupRepositoryAdapter.delete(group)
     return true
   }
 
